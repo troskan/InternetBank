@@ -8,7 +8,7 @@ namespace IndividuelltProjektBasic
     {
         static void Main(string[] args)
         {
-            //Accounts
+            //Usernames, passwords, first account, account balance, secound account, account balance,
             List<string[]> bankAccounts = new List<string[]>
             {
                 new string[] {"Sven", "Häst123", "Lönekonto", "13000.00", "Sparkonto", "23.83"},
@@ -17,10 +17,15 @@ namespace IndividuelltProjektBasic
                 new string[] {"Sara", "Äpple22", "Lönekonto", "3000.00", "Sparkonto", "70000.00"},
                 new string[] {"Maja", "Harv55", "Lönekonto", "200.00", "Sparkonto", "8530000.00"},
             };
-
+            
             WelcomeMessage();
-          
-            DisplayMenu(UserExist(bankAccounts, UserNameInput(), UserPassInput()));
+
+            bool userLoggedIn = UserExist(bankAccounts, UserNameInput(), UserPassInput());
+
+            DisplayMenu(userLoggedIn);
+            DoWhatUserDecides(userLoggedIn);
+
+            
         }
         static void WelcomeMessage()
         {
@@ -29,38 +34,44 @@ namespace IndividuelltProjektBasic
         }
         static string UserNameInput()
         {
-            string userName;
             Console.WriteLine("Skriv ditt användernamn.");
-            return userName = Console.ReadLine();
-            
+            string userName = Console.ReadLine();
+            return userName;
         }
         static string UserPassInput()
         {
-            string userPass;
             Console.WriteLine("Skriv ditt lösenord.");
-            return userPass = Console.ReadLine();
+            string userPass = Console.ReadLine();
+            return userPass;
         }
         static bool UserExist(List<string[]> bankAccounts, string userName, string userPass)
         {
-            foreach (string[] user in bankAccounts)
+
+            for (int i = 1; i < 3; i++)
             {
-                if (user.Contains(userName) && user.Contains(userPass))
+                foreach (string[] user in bankAccounts)
                 {
-                    return true;
+                    if (user.Contains(userName) && user.Contains(userPass))
+                    {
+                        return true;
+                    }
                 }
+                Console.Clear();
+                Console.WriteLine("Lösenord eller användarenamn stämmer inte, försök igen.");
+                UserNameInput();
+                UserPassInput();
             }
+            Console.WriteLine("Inloggning har misslyckats! Programmet kommer nu avslutas.");
+            Console.ReadKey();
             return false;
         }
-        static void DisplayMenu(bool isLoggedIn)
+        static void DoWhatUserDecides(bool isLoggedIn)
         {
-            isLoggedIn = false;
-            if (isLoggedIn == false)
-            {
-                Console.WriteLine("You are not logged in.");
-            }
+
             while (isLoggedIn)
             {
-                Console.WriteLine($"You are logged in.");
+                Console.Clear();
+                Console.WriteLine($"Du är inloggad.");
 
                 Console.WriteLine("1.Se dina konton och saldo");
                 Console.WriteLine("2.Överföring mellan konton");
@@ -88,6 +99,21 @@ namespace IndividuelltProjektBasic
                         break;
                 }
             }
+
+        }
+        static void DisplayMenu(bool isLoggedIn)
+        {
+            if (isLoggedIn == true)
+            {
+                Console.Clear();
+                Console.WriteLine($"Du är inloggad.");
+
+                Console.WriteLine("1.Se dina konton och saldo");
+                Console.WriteLine("2.Överföring mellan konton");
+                Console.WriteLine("3.Ta ut pengar");
+                Console.WriteLine("4.Logga ut");
+            }
+
         }
         static void DisplayAccountBalance()
         {
