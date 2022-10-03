@@ -11,21 +11,22 @@ namespace IndividuelltProjektBasic
             //Usernames, passwords, first account, account balance, secound account, account balance,
             List<string[]> bankAccounts = new List<string[]>
             {
-                new string[] {"Sven", "Häst123", "Lönekonto", "13000.00", "Sparkonto", "23.83"},
+                new string[] {"Sven", "Häst123", "Lönekonto", "13000", "Sparkonto", "23.83"},
                 new string[] {"Javier", "Volvo55", "Lönekonto", "10000.00", "Sparkonto", "40000.00"},
                 new string[] {"Anna", "skog55", "Lönekonto", "25000.00", "Sparkonto", "20000.00"},
                 new string[] {"Sara", "Äpple22", "Lönekonto", "3000.00", "Sparkonto", "70000.00"},
                 new string[] {"Maja", "Harv55", "Lönekonto", "200.00", "Sparkonto", "8530000.00"},
             };
-            
+
             WelcomeMessage();
 
-            bool userLoggedIn = UserExist(bankAccounts, UserNameInput(), UserPassInput());
+            string userName = UserNameInput();
+            string password = UserPassInput();
+            bool userLoggedIn = DoesUserExist(bankAccounts, userName, password);
 
             DisplayMenu(userLoggedIn);
-            DoWhatUserDecides(userLoggedIn);
 
-            
+            DoWhatUserDecides(userName, userLoggedIn,  bankAccounts);
         }
         static void WelcomeMessage()
         {
@@ -34,7 +35,7 @@ namespace IndividuelltProjektBasic
         }
         static string UserNameInput()
         {
-            Console.WriteLine("Skriv ditt användernamn.");
+            Console.WriteLine("Skriv ditt användernamn. Tänk på att använda stor och liten bokstav!");
             string userName = Console.ReadLine();
             return userName;
         }
@@ -44,11 +45,13 @@ namespace IndividuelltProjektBasic
             string userPass = Console.ReadLine();
             return userPass;
         }
-        static bool UserExist(List<string[]> bankAccounts, string userName, string userPass)
+        //Does the user have an account?
+        static bool DoesUserExist(List<string[]> bankAccounts, string userName, string userPass)
         {
-
+            //For loop to set the max login tries.
             for (int i = 1; i < 3; i++)
             {
+                //Foreach to expouse all content from bank
                 foreach (string[] user in bankAccounts)
                 {
                     if (user.Contains(userName) && user.Contains(userPass))
@@ -65,7 +68,7 @@ namespace IndividuelltProjektBasic
             Console.ReadKey();
             return false;
         }
-        static void DoWhatUserDecides(bool isLoggedIn)
+        static void DoWhatUserDecides(string userName, bool isLoggedIn, List<string[]> bankAccounts)
         {
 
             while (isLoggedIn)
@@ -82,9 +85,13 @@ namespace IndividuelltProjektBasic
                 switch (input)
                 {
                     case 1:
+                        //metod
                         Console.WriteLine("Your account.");
+                        DisplayAccountBalance(bankAccounts, userName);
+                        Console.ReadKey();
                         break;
                     case 2:
+                        //metod
                         Console.WriteLine("Transfer");
                         break;
                     case 3:
@@ -115,9 +122,36 @@ namespace IndividuelltProjektBasic
             }
 
         }
-        static void DisplayAccountBalance()
-        {
 
+        static void DisplayAccountBalance(List<string[]> bankAccounts, string userName)
+        {
+            if (userName == bankAccounts[0][0])
+            {
+                DisplayCorrectAccount(bankAccounts, 0);
+            }
+            else if (userName == bankAccounts[1][0])
+            {
+                DisplayCorrectAccount(bankAccounts, 1);
+            }
+            else if (userName == bankAccounts[2][0])
+            {
+                DisplayCorrectAccount(bankAccounts, 2);
+            }
+            else if (userName == bankAccounts[3][0])
+            {
+                DisplayCorrectAccount(bankAccounts, 3);
+            }
+            else if (userName == bankAccounts[4][0])
+            {
+                DisplayCorrectAccount(bankAccounts, 4);
+            }
+        }
+        static void DisplayCorrectAccount(List<string[]> bankAccounts, int whichArray)
+        {
+            Console.WriteLine(bankAccounts[whichArray][2]);
+            Console.WriteLine(bankAccounts[whichArray][3]);
+            Console.WriteLine(bankAccounts[whichArray][4]);
+            Console.WriteLine(bankAccounts[whichArray][5]);
         }
         static void TransferMoney()
         {
