@@ -91,7 +91,9 @@ namespace IndividuelltProjektBasic
                         Console.ReadKey();
                         break;
                     case 2:
-                        //metod
+                        TransferMoney(bankAccounts, userName);
+                        Console.ReadKey();
+
                         Console.WriteLine("Transfer");
                         break;
                     case 3:
@@ -123,39 +125,78 @@ namespace IndividuelltProjektBasic
 
         }
 
-        static void DisplayAccountBalance(List<string[]> bankAccounts, string userName)
+        static int DisplayAccountBalance(List<string[]> bankAccounts, string userName)
         {
             if (userName == bankAccounts[0][0])
             {
                 DisplayCorrectAccount(bankAccounts, 0);
+                return 0;
             }
             else if (userName == bankAccounts[1][0])
             {
                 DisplayCorrectAccount(bankAccounts, 1);
+                return 1;
             }
             else if (userName == bankAccounts[2][0])
             {
                 DisplayCorrectAccount(bankAccounts, 2);
+                return 2;
             }
             else if (userName == bankAccounts[3][0])
             {
                 DisplayCorrectAccount(bankAccounts, 3);
+                return 3;
             }
             else if (userName == bankAccounts[4][0])
             {
                 DisplayCorrectAccount(bankAccounts, 4);
+                return 4;
             }
+            return 0;
         }
         static void DisplayCorrectAccount(List<string[]> bankAccounts, int whichArray)
         {
-            Console.WriteLine(bankAccounts[whichArray][2]);
-            Console.WriteLine(bankAccounts[whichArray][3]);
-            Console.WriteLine(bankAccounts[whichArray][4]);
-            Console.WriteLine(bankAccounts[whichArray][5]);
+            Console.WriteLine("1." + bankAccounts[whichArray][2]);
+            Console.WriteLine("2." + bankAccounts[whichArray][3]);
+            Console.WriteLine("3." + bankAccounts[whichArray][4]);
+            Console.WriteLine("4." + bankAccounts[whichArray][5]);
         }
-        static void TransferMoney()
+        static void TransferMoney(List<string[]> bankAccounts, string userName)
         {
+            int whichUser = DisplayAccountBalance(bankAccounts, userName);
+            Console.WriteLine("Välj ett konto att göra en överförning ifrån.");
 
+            int withdrawFrom = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Välj ett konto att göra en överförning till.");
+
+            int withdrawTo = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Hur mycket vill du föra över?");
+
+            double salaryAccount = Convert.ToDouble(bankAccounts[whichUser][4]);
+            double savingsAccount = Convert.ToDouble(bankAccounts[whichUser][6]);
+            double startAccount = Convert.ToDouble(bankAccounts[whichUser][withdrawFrom]);
+            double endAccount = Convert.ToDouble(bankAccounts[whichUser][withdrawTo]);
+
+            double cashAmount = Convert.ToInt32(Console.ReadLine());
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                if (cashAmount > startAccount)
+                {
+                    Console.WriteLine("Aj då! Så mycket pengar finns inte på kontot!");
+                    isRunning = false;
+                }
+                else if (cashAmount <= 0)
+                {
+                    Console.WriteLine("Aj då.. minsta belopp att föra över är 1 krona.");
+                    isRunning = false;
+                }
+                endAccount = +cashAmount;
+                startAccount = -cashAmount;
+                DisplayAccountBalance(bankAccounts, userName);
+
+            }
         }
         static void WithdrawMoney()
         {
