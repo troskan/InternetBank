@@ -11,12 +11,13 @@ namespace IndividuelltProjektBasic
             //Usernames, passwords, first account, account balance, secound account, account balance,
             List<string[]> bankAccounts = new List<string[]>
             {
-                new string[] {"Sven", "Häst123", "Lönekonto", "13000", "Sparkonto", "23.83"},
+                new string[] {"Sven", "Häst123", "Lönekonto", "13000,00", "Sparkonto", "23,83"},
                 new string[] {"Javier", "Volvo55", "Lönekonto", "10000.00", "Sparkonto", "40000.00"},
                 new string[] {"Anna", "skog55", "Lönekonto", "25000.00", "Sparkonto", "20000.00"},
                 new string[] {"Sara", "Äpple22", "Lönekonto", "3000.00", "Sparkonto", "70000.00"},
                 new string[] {"Maja", "Harv55", "Lönekonto", "200.00", "Sparkonto", "8530000.00"},
             };
+
 
             WelcomeMessage();
 
@@ -26,7 +27,7 @@ namespace IndividuelltProjektBasic
 
             DisplayMenu(userLoggedIn);
 
-            DoWhatUserDecides(userName, userLoggedIn,  bankAccounts);
+            DoWhatUserDecides(userName, userLoggedIn, bankAccounts);
         }
         static void WelcomeMessage()
         {
@@ -70,7 +71,7 @@ namespace IndividuelltProjektBasic
         }
         static void DoWhatUserDecides(string userName, bool isLoggedIn, List<string[]> bankAccounts)
         {
-
+            decimal[] account = new decimal[2];
             while (isLoggedIn)
             {
                 Console.Clear();
@@ -91,7 +92,7 @@ namespace IndividuelltProjektBasic
                         Console.ReadKey();
                         break;
                     case 2:
-                        TransferMoney(bankAccounts, userName);
+                        TransferMoney(bankAccounts, userName, account);
                         Console.ReadKey();
 
                         Console.WriteLine("Transfer");
@@ -154,53 +155,96 @@ namespace IndividuelltProjektBasic
             }
             return 0;
         }
-        static void DisplayCorrectAccount(List<string[]> bankAccounts, int whichArray)
+        static int WhichAccount(List<string[]> bankAccounts, string userName)
         {
-            Console.WriteLine("1." + bankAccounts[whichArray][2]);
-            Console.WriteLine("2." + bankAccounts[whichArray][3]);
-            Console.WriteLine("3." + bankAccounts[whichArray][4]);
-            Console.WriteLine("4." + bankAccounts[whichArray][5]);
+            if (userName == bankAccounts[0][0])
+            {
+                return 0;
+            }
+            else if (userName == bankAccounts[1][0])
+            {
+                return 1;
+            }
+            else if (userName == bankAccounts[2][0])
+            {
+                return 2;
+            }
+            else if (userName == bankAccounts[3][0])
+            {
+                return 3;
+            }
+            else if (userName == bankAccounts[4][0])
+            {
+                return 4;
+            }
+            return 0;
         }
-        static void TransferMoney(List<string[]> bankAccounts, string userName)
+        static void DisplayCorrectAccount(List<string[]> bankAccounts, int user)
         {
-            int whichUser = DisplayAccountBalance(bankAccounts, userName);
-            Console.WriteLine("Välj ett konto att göra en överförning ifrån.");
+            Console.WriteLine("1." + bankAccounts[user][2]);
+            Console.WriteLine(bankAccounts[user][3]);
+          
+            Console.WriteLine("2." + bankAccounts[user][4]);
+            Console.WriteLine(bankAccounts[user][5]);
+        }
 
-            int withdrawFrom = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Välj ett konto att göra en överförning till.");
+        static void TransferMoney(List<string[]> bankAccounts, string userName, decimal[] account)
+        {
+            account = InputConversion(bankAccounts, userName);
 
-            int withdrawTo = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Hur mycket vill du föra över?");
+            Console.WriteLine("Från vilket konto vill du göra en överförning?");
+            int transferFrom = Convert.ToInt32(Console.ReadLine());
 
-            double salaryAccount = Convert.ToDouble(bankAccounts[whichUser][4]);
-            double savingsAccount = Convert.ToDouble(bankAccounts[whichUser][6]);
-            double startAccount = Convert.ToDouble(bankAccounts[whichUser][withdrawFrom]);
-            double endAccount = Convert.ToDouble(bankAccounts[whichUser][withdrawTo]);
+            Console.WriteLine("Till vilket konto vill du göra en överförning?");
+            int transferTo = Convert.ToInt32(Console.ReadLine());
 
-            double cashAmount = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Hur mycket pengar vill du överföra?");
+            decimal cashAmount = Convert.ToDecimal(Console.ReadLine());
             bool isRunning = true;
 
-            while (isRunning)
-            {
-                if (cashAmount > startAccount)
-                {
-                    Console.WriteLine("Aj då! Så mycket pengar finns inte på kontot!");
-                    isRunning = false;
-                }
-                else if (cashAmount <= 0)
-                {
-                    Console.WriteLine("Aj då.. minsta belopp att föra över är 1 krona.");
-                    isRunning = false;
-                }
-                endAccount = +cashAmount;
-                startAccount = -cashAmount;
-                DisplayAccountBalance(bankAccounts, userName);
+            //while (isRunning)
+            //{
+            //    if (cashAmount > account[transferFrom])
+            //    {
+            //        Console.WriteLine("Aj då! Så mycket pengar finns inte på kontot!");
+            //        isRunning = false;
+            //    }
+            //    else if (cashAmount <= 0)
+            //    {
+            //        Console.WriteLine("Aj då.. minsta belopp att föra över är 1 krona.");
+            //        isRunning = false;
+            //    }
 
-            }
+            account[transferFrom] = account[transferFrom] - cashAmount;
+            account[transferTo] = account[transferTo] + cashAmount;
+
+            OutputConversion(bankAccounts, userName, account);
+           
+            Console.WriteLine(account[1]);
+            Console.WriteLine(account[2]);
+
+            //}
+        }
+        static decimal[] InputConversion(List<string[]> bankAccounts, string userName)
+        {
+            decimal[] account = new decimal[3];
+            int user = WhichAccount(bankAccounts, userName);
+            account[1] = Convert.ToDecimal(bankAccounts[user][3]);
+            account[2] = Convert.ToDecimal(bankAccounts[user][5]);
+
+            return account;
+            
+        }
+        static List<string[]> OutputConversion(List<string[]> bankAccounts, string userName, decimal[] account)
+        {
+            int user = WhichAccount(bankAccounts, userName);
+            bankAccounts[user][3] = account[1].ToString();
+            bankAccounts[user][5] = account[2].ToString();
+            return bankAccounts;
         }
         static void WithdrawMoney()
         {
-
+            
         }
     }
 }
