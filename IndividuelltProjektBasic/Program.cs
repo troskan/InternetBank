@@ -17,8 +17,6 @@ namespace IndividuelltProjektBasic
                 new string[] {"Sara", "Äpple22", "Lönekonto", "3000.00", "Sparkonto", "70000.00"},
                 new string[] {"Maja", "Harv55", "Lönekonto", "200.00", "Sparkonto", "8530000.00"},
             };
-
-
             WelcomeMessage();
 
             string userName = UserNameInput();
@@ -28,6 +26,7 @@ namespace IndividuelltProjektBasic
             DisplayMenu(userLoggedIn);
 
             DoWhatUserDecides(userName, userLoggedIn, bankAccounts);
+
         }
         static void WelcomeMessage()
         {
@@ -46,28 +45,56 @@ namespace IndividuelltProjektBasic
             string userPass = Console.ReadLine();
             return userPass;
         }
-        //Does the user have an account?
         static bool DoesUserExist(List<string[]> bankAccounts, string userName, string userPass)
         {
-            //For loop to set the max login tries.
-            for (int i = 1; i < 3; i++)
+            //Foreach to expouse all content from bank
+            foreach (string[] user in bankAccounts)
             {
-                //Foreach to expouse all content from bank
-                foreach (string[] user in bankAccounts)
+                //Does the user exist inside array?
+                if (user.Contains(userName) && user.Contains(userPass))
                 {
-                    if (user.Contains(userName) && user.Contains(userPass))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                Console.Clear();
-                Console.WriteLine("Lösenord eller användarenamn stämmer inte, försök igen.");
-                UserNameInput();
-                UserPassInput();
             }
-            Console.WriteLine("Inloggning har misslyckats! Programmet kommer nu avslutas.");
-            Console.ReadKey();
+            //User does not exist, try again
+            for (int i = 0; i < 2; i++)
+            {
+                if (TryLogin(userName, userPass, bankAccounts) == true)
+                {
+                    return true;
+                }
+            }
+            //User has not been found.
+            Console.WriteLine("För många inloggningsförsök, programmet avslutas.");
             return false;
+        }
+        static bool TryLogin(string userName, string userPass, List<string[]> bankAccounts)
+        {
+            userName = UserNameInput();
+            userPass = UserPassInput();
+            foreach (string[] user in bankAccounts)
+            {
+                //Does the user exist inside array?
+                if (user.Contains(userName) && user.Contains(userPass))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        static void DisplayMenu(bool isLoggedIn)
+        {
+            if (isLoggedIn == true)
+            {
+                Console.Clear();
+                Console.WriteLine($"Du är inloggad.");
+
+                Console.WriteLine("1.Se dina konton och saldo");
+                Console.WriteLine("2.Överföring mellan konton");
+                Console.WriteLine("3.Ta ut pengar");
+                Console.WriteLine("4.Logga ut");
+            }
+
         }
         static void DoWhatUserDecides(string userName, bool isLoggedIn, List<string[]> bankAccounts)
         {
@@ -87,18 +114,16 @@ namespace IndividuelltProjektBasic
                 {
                     case 1:
                         //metod
-                        Console.WriteLine("Your account.");
+                        Console.WriteLine("Ditt konto.");
                         DisplayAccountBalance(bankAccounts, userName);
                         Console.ReadKey();
                         break;
                     case 2:
                         TransferMoney(bankAccounts, userName, account);
                         Console.ReadKey();
-
-                        Console.WriteLine("Transfer");
                         break;
                     case 3:
-                        Console.WriteLine("Ta ut pengar");
+                        WithdrawMoney(bankAccounts, account, userName);
                         break;
                     case 4:
                         isLoggedIn = false;
@@ -108,20 +133,6 @@ namespace IndividuelltProjektBasic
                         Console.WriteLine("Number does not exist, eneter another number.");
                         break;
                 }
-            }
-
-        }
-        static void DisplayMenu(bool isLoggedIn)
-        {
-            if (isLoggedIn == true)
-            {
-                Console.Clear();
-                Console.WriteLine($"Du är inloggad.");
-
-                Console.WriteLine("1.Se dina konton och saldo");
-                Console.WriteLine("2.Överföring mellan konton");
-                Console.WriteLine("3.Ta ut pengar");
-                Console.WriteLine("4.Logga ut");
             }
 
         }
@@ -187,64 +198,125 @@ namespace IndividuelltProjektBasic
             Console.WriteLine("2." + bankAccounts[user][4]);
             Console.WriteLine(bankAccounts[user][5]);
         }
-
         static void TransferMoney(List<string[]> bankAccounts, string userName, decimal[] account)
         {
+            //From List to Decimal to change value in bank account
             account = InputConversion(bankAccounts, userName);
-
-            Console.WriteLine("Från vilket konto vill du göra en överförning?");
-            int transferFrom = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("Till vilket konto vill du göra en överförning?");
-            int transferTo = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("Hur mycket pengar vill du överföra?");
-            decimal cashAmount = Convert.ToDecimal(Console.ReadLine());
+            
             bool isRunning = true;
+            while (isRunning == true)
+            {
+                Console.Clear();
+                Console.WriteLine($"1. Lönekonto: {account[1]}");
+                Console.WriteLine($"2. Sparkonto: {account[2]}");
 
-            //while (isRunning)
-            //{
-            //    if (cashAmount > account[transferFrom])
-            //    {
-            //        Console.WriteLine("Aj då! Så mycket pengar finns inte på kontot!");
-            //        isRunning = false;
-            //    }
-            //    else if (cashAmount <= 0)
-            //    {
-            //        Console.WriteLine("Aj då.. minsta belopp att föra över är 1 krona.");
-            //        isRunning = false;
-            //    }
+                Console.WriteLine("Från vilket konto vill du göra en överförning?");
+                int transferFrom = Convert.ToInt32(Console.ReadLine());
 
-            account[transferFrom] = account[transferFrom] - cashAmount;
-            account[transferTo] = account[transferTo] + cashAmount;
+                Console.WriteLine("Till vilket konto vill du göra en överförning?");
+                int transferTo = Convert.ToInt32(Console.ReadLine());
 
-            OutputConversion(bankAccounts, userName, account);
-           
-            Console.WriteLine(account[1]);
-            Console.WriteLine(account[2]);
+                if (transferFrom != 1 && transferFrom != 2)
+                {
+                Console.WriteLine("Kontot du avgav existerar inte.");
+                    break;
+                }
 
-            //}
+                else if (transferTo != 1 && transferTo != 2)
+                {
+                Console.WriteLine("Kontot du avgav existerar inte.");
+                    break;
+                }
+
+                Console.WriteLine("Hur mycket pengar vill du överföra?");
+                decimal cashAmount = Convert.ToDecimal(Console.ReadLine());
+
+                if (cashAmount > account[transferFrom])
+                {
+                    Console.WriteLine("Aj då! Så mycket pengar finns inte på kontot!");
+                    break;
+                }
+                else if (cashAmount <= 0)
+                {
+                    Console.WriteLine("Aj då.. minsta belopp att föra över är 1 krona.");
+                    break;
+                }
+                else
+                {
+                    account[transferFrom] = account[transferFrom] - cashAmount;
+                    account[transferTo] = account[transferTo] + cashAmount;
+
+                    OutputConversion(bankAccounts, userName, account);
+
+                    Console.WriteLine($"1. Lönekonto:{account[1]}");
+                    Console.WriteLine($"2. Sparkonto:{account[2]}");
+                    Console.ReadKey();
+                    break;
+                }
+            }
         }
         static decimal[] InputConversion(List<string[]> bankAccounts, string userName)
         {
             decimal[] account = new decimal[3];
             int user = WhichAccount(bankAccounts, userName);
+
             account[1] = Convert.ToDecimal(bankAccounts[user][3]);
             account[2] = Convert.ToDecimal(bankAccounts[user][5]);
 
             return account;
-            
         }
         static List<string[]> OutputConversion(List<string[]> bankAccounts, string userName, decimal[] account)
         {
             int user = WhichAccount(bankAccounts, userName);
+
+            account[1] = Math.Round(account[1], 2);
+            account[2] = Math.Round(account[2], 2);
+
             bankAccounts[user][3] = account[1].ToString();
+            
             bankAccounts[user][5] = account[2].ToString();
             return bankAccounts;
         }
-        static void WithdrawMoney()
+        static void WithdrawMoney(List<string[]> bankAccounts, decimal[] account,string userName)
         {
-            
+           account = InputConversion(bankAccounts, userName);
+
+            while (true)
+            {
+                Console.WriteLine($"1. Lönekonto: {account[1]}");
+                Console.WriteLine($"2. Sparkonto: {account[2]}");
+
+                Console.WriteLine("Från vilket konto vill du ta ut pengar?");
+                int withdrawFrom = Convert.ToInt32(Console.ReadLine());
+
+                Console.WriteLine("Hur mycket pengar vill du ta ut?");
+                decimal cashAmount = Convert.ToDecimal(Console.ReadLine());
+
+                if (cashAmount > account[withdrawFrom])
+                {
+                    Console.WriteLine("Aj då, beloppet du har valt att ta ut finns inte på ditt konto.");
+                    break;
+                }
+                else if (cashAmount <= 0)
+                {
+                    Console.WriteLine("Minsta tillåtna belopp att ta ut är: 0kr.");
+                    break;
+                }
+                if (withdrawFrom != 1 && withdrawFrom != 2)
+                {
+                    Console.WriteLine("Tyvärr, det kontot du har valt existerar inte..");
+                    break;
+                }
+
+                account[withdrawFrom] = account[withdrawFrom] - cashAmount;
+                OutputConversion(bankAccounts, userName, account);
+                Console.WriteLine($"1. Lönekonto: {account[1]}");
+                Console.WriteLine($"2. Sparkonto: {account[2]}");
+                Console.ReadKey();
+                break;
+
+            }
+
         }
     }
 }
