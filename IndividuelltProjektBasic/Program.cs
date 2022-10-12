@@ -185,12 +185,19 @@ namespace IndividuelltProjektBasic
                 if (transferFrom != 1 && transferFrom != 2)
                 {
                     Console.WriteLine("Kontot du avgav existerar inte.");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
                     break;
                 }
 
                 else if (transferTo != 1 && transferTo != 2)
                 {
                     Console.WriteLine("Kontot du avgav existerar inte.");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
+
                     break;
                 }
 
@@ -201,11 +208,17 @@ namespace IndividuelltProjektBasic
                 if (cashAmount > account[transferFrom])
                 {
                     Console.WriteLine("Aj då! Så mycket pengar finns inte på kontot!");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
                     break;
                 }
                 else if (cashAmount <= 0)
                 {
                     Console.WriteLine("Aj då.. minsta belopp att föra över är 1 krona.");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
                     break;
                 }
                 else
@@ -243,16 +256,25 @@ namespace IndividuelltProjektBasic
                 if (cashAmount > account[withdrawFrom])
                 {
                     Console.WriteLine("Aj då, beloppet du har valt att ta ut finns inte på ditt konto.");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
                     break;
                 }
                 else if (cashAmount <= 0)
                 {
                     Console.WriteLine("Minsta tillåtna belopp att ta ut är: 0kr.");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
                     break;
                 }
                 if (withdrawFrom != 1 && withdrawFrom != 2)
                 {
                     Console.WriteLine("Tyvärr, det kontot du har valt existerar inte..");
+
+                    Console.WriteLine("Klicka på enter för att gå vidare..");
+                    Console.ReadKey();
                     break;
                 }
                 //User logs in again before the transaction goes through.
